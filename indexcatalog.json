@@ -1,0 +1,9 @@
+[
+    {
+        "description": "Interdisciplinary Earth Data Alliance ",
+        "logo": "http://geodex.org/images/logos/ieda_maplogo.png",
+        "indexlocation": "./indexes/getiedadataorg",
+        "index": "ieda",
+        "name": "IEDA"
+    }
+]

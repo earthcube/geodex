@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  traefik:
+    image: "traefik:v2.2"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  api:
+    image: craigwillis/p418services
+    ports:
+      - 6789
+    environment:
+      - GEODEX_HOST=geodex.local.earthcube.org
+    volumes:
+      - "/bleve:/indexes"
+      - "./indexcatalog.json:/indexcatalog.json"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`geodex.local.earthcube.org`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.entrypoints=web"
+
+  geodex:
+    image: craigwillis/p418webui
+    environment:
+      - GEODEX_HOST=geodex.local.earthcube.org
+    ports:
+      - 9900
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.geodex.rule=Host(`geodex.local.earthcube.org`)"
+      - "traefik.http.routers.geodex.entrypoints=web"
+
+  geocodes:
+    image: craigwillis/p418webui2
+    environment:
+      - GEODEX_HOST=geodex.local.earthcube.org
+    ports:
+      - 80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.geocodes.rule=Host(`geodex.local.earthcube.org`) && PathPrefix(`/geocodes`)"
+      - "traefik.http.routers.geocodes.entrypoints=web"
+
+  tile38:
+    image: tile38/tile38
+    ports:
+     - 9851
+    volumes:
+      - "/home/ubuntu/go/src/earthcube.org/Project418/gleaner/docs/starterpack/DV/spatialindex:/data"
