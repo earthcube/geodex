@@ -3,6 +3,7 @@
 ## Prerequisites
 * Assumes Ubuntu LTS
 * Go (`apt-get install golang`)
+* Go dep
 * Docker
 
 
@@ -28,12 +29,14 @@ docker build -t geocodes/gleaner -f build/Dockerfile .
 
 ```
 cd services
-make linux
+dep ensure
+make services
 docker build -t geocodes/p418services -f build/Dockerfile .
 ```
 
 ```
 cd webui
+dep ensure
 make webui
 docker build -t geocodes/p418webui -f build/Dockerfile .
 ```
@@ -46,7 +49,20 @@ docker build -t geocodes/p418webui2 .
 
 ## Running 
 
-For Gleaner, see the ECO [README](https://github.com/earthcube/gleaner/blob/eco/docs/starterpack/README.md).
+For Gleaner, see also the ECO [README](https://github.com/earthcube/gleaner/blob/eco/docs/starterpack/README.md).
+
+```
+cd gleaner/docs/starterpack/
+. demo-exp.env
+docker-compose -f gleaner-compose-ECAM.yml  up
+```
+
+This will index IEDA using spatial, text, graph millers (`configs/eco.yaml`)
+```
+cd gleaner
+./runGleaner.sh -setup
+./runGleaner.sh
+```
 
 Create /etc/hosts entry for `geodex.local.earthcube.org`:
 ```
