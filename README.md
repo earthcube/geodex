@@ -1,6 +1,6 @@
 # Running the Geodex / GeoCODES services
 
-## Prerequisits
+## Prerequisites
 * Assumes Ubuntu LTS
 * Go (`apt-get install golang`)
 * Docker
@@ -10,10 +10,10 @@
 ```
 mkdir -p ~/go/src/earthcube.org/Project418/
 cd go/src/earthcube.org/Project418
-git clone https://github.com/craig-willis/gleaner -b eco
-git clone https://github.com/craig-willis/services -b eco
-git clone https://github.com/craig-willis/webui -b eco
-git clone https://github.com/craig-willis/webUI2 -b eco
+git clone https://github.com/earthcube/gleaner -b eco
+git clone https://github.com/earthcube/services -b eco
+git clone https://github.com/earthcube/webui -b eco
+git clone https://github.com/earthcube/webUI2 -b eco
 ```
 
 
@@ -23,30 +23,30 @@ git clone https://github.com/craig-willis/webUI2 -b eco
 ```
 cd gleaner
 make gleaner
-docker build -t you/gleaner -f build/Dockerfile .
+docker build -t geocodes/gleaner -f build/Dockerfile .
 ```
 
 ```
 cd services
 make linux
-docker build -t you/p418services -f build/Dockerfile .
+docker build -t geocodes/p418services -f build/Dockerfile .
 ```
 
 ```
 cd webui
 make webui
-docker build -t you/p418webui -f build/Dockerfile .
+docker build -t geocodes/p418webui -f build/Dockerfile .
 ```
 
 ```
 cd webUI2
-docker build -t you/p418webui2 .
+docker build -t geocodes/p418webui2 .
 ```
 
 
 ## Running 
 
-For Gleaner, see the ECO [README](https://github.com/craig-willis/gleaner/blob/eco/docs/starterpack/README.md).
+For Gleaner, see the ECO [README](https://github.com/earthcube/gleaner/blob/eco/docs/starterpack/README.md).
 
 Create /etc/hosts entry for `geodex.local.earthcube.org`:
 ```

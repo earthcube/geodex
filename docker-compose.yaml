@@ -17,7 +17,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   api:
-    image: craigwillis/p418services
+    image: geocodes/p418services
     ports:
       - 6789
     environment:
@@ -31,7 +31,7 @@ services:
       - "traefik.http.routers.api.entrypoints=web"
 
   geodex:
-    image: craigwillis/p418webui
+    image: geocodes/p418webui
     environment:
       - GEODEX_HOST=geodex.local.earthcube.org
     ports:
@@ -42,7 +42,7 @@ services:
       - "traefik.http.routers.geodex.entrypoints=web"
 
   geocodes:
-    image: craigwillis/p418webui2
+    image: geocodes/p418webui2
     environment:
       - GEODEX_HOST=geodex.local.earthcube.org
     ports:
