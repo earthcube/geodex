@@ -104,3 +104,4 @@ Test the following URLs:
 * `entrypoint` sed approach to host/domain change is lazy
 * Index maintenance can be separate from running instance -- this largely seems to be what has been done in the past.  Build the index on one machine, copy it to another.
 * IEDA bounding boxes look backwards? Also, IEDA is successfully indexed on geodex.org, so maybe the array problem isn't a problem?
+* bleve index is created on /bleve. For now, I just mount that into the services container, but this should be configurable.
