@@ -5,5 +5,32 @@
         "indexlocation": "./indexes/getiedadataorg",
         "index": "ieda",
         "name": "IEDA"
+    },
+    {
+        "description": "HydroShare; operated by The Consortium of Universities for the Advancement of Hydrologic Science Inc.",
+        "logo": "http://geodex.org/images/logos/cuahsiHydroshare.png",
+        "indexlocation": "./indexes/wwwhydroshareorg",
+        "index": "wwwhydroshareorg",
+        "name": "HydroShare"
+    },
+{
+        "description": "Biological and Chemical Oceanography Data Management Office",
+        "logo": "http://geodex.org/images/logos/bco-dmo-words-BLUE.jpg",
+        "indexlocation": "./indexes/wwwbco-dmoorg",
+        "index": "bcodmo",
+        "name": "BCO-DMO"
+    },
+{
+        "description": "Open Core Data",
+        "logo": "http://geodex.org/images/logos/ocd_logo.jpg",
+        "indexlocation": "./indexes/opencore",
+        "index": "ocd",
+        "name": "OpenCore"
+    },{
+        "description": "IRIS",
+        "logo": "http://geodex.org/images/logos/iris_color_screen_lrg.png",
+        "indexlocation": "./indexes/dsirisedu",
+        "index": "iris",
+        "name": "IRIS"
     }
 ]

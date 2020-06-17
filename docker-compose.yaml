@@ -13,7 +13,8 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.myresolver.acme.email=willis8@illinois.edu"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
@@ -27,17 +28,20 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   api:
-    image: geocodes/p418services
+    image: geocodes/p418services:latest
     ports:
       - 6789
     environment:
-      - GEODEX_HOST=geodex.local.earthcube.org
+      - GEODEX_HOST=geocodes-dev.earthcube.org
+    env_file:
+     - ./prod.env
     volumes:
       - "/bleve:/indexes:ro"
       - "./indexcatalog.json:/indexcatalog.json"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`geodex.local.earthcube.org`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.api.rule=Host(`geocodes-dev.earthcube.org`) && PathPrefix(`/apidocs.json`)"
+      - "traefik.http.routers.api.rule=Host(`geocodes-dev.earthcube.org`) && PathPrefix(`/api`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls=true"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
@@ -45,12 +49,16 @@ services:
   geodex:
     image: geocodes/p418webui
     environment:
-      - GEODEX_HOST=geodex.local.earthcube.org
+      - GEODEX_HOST=geocodes-dev.earthcube.org
+    env_file:
+     - ./prod.env
     ports:
       - 9900
+    volumes:
+      - "/bleve:/indexes:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.geodex.rule=Host(`geodex.local.earthcube.org`)"
+      - "traefik.http.routers.geodex.rule=Host(`geocodes-dev.earthcube.org`)"
       - "traefik.http.routers.geodex.entrypoints=websecure"
       - "traefik.http.routers.geodex.tls=true"
       - "traefik.http.routers.geodex.tls.certresolver=myresolver"
@@ -58,12 +66,14 @@ services:
   geocodes:
     image: geocodes/p418webui2
     environment:
-      - GEODEX_HOST=geodex.local.earthcube.org
+      - GEODEX_HOST=geocodes-dev.earthcube.org
     ports:
       - 80
+    env_file:
+     - ./prod.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.geocodes.rule=Host(`geodex.local.earthcube.org`) && PathPrefix(`/geocodes`)"
+      - "traefik.http.routers.geocodes.rule=Host(`geocodes-dev.earthcube.org`) && PathPrefix(`/geocodes`)"
       - "traefik.http.routers.geocodes.entrypoints=websecure"
       - "traefik.http.routers.geocodes.tls=true"
       - "traefik.http.routers.geocodes.tls.certresolver=myresolver"
@@ -73,4 +83,49 @@ services:
     ports:
      - 9851
     volumes:
-      - "/home/ubuntu/go/src/earthcube.org/Project418/gleaner/docs/starterpack/DV/spatialindex:/data"
+      - "/data/volumes/spatialindex:/data"
+
+
+  blazegraph:
+    image: metaphacts/blazegraph-basic
+    ports:
+      - 8080
+    environment:
+      JAVA_XMS: 1024m
+      JAVA_XMX: 2g
+    restart: on-failure
+    volumes:
+      - "/data/volumes/blazegraph-data:/data"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blazegraph.rule=Host(`geocodes-dev.earthcube.org`) && PathPrefix(`/blazegraph`)"
+      - "traefik.http.routers.blazegraph.entrypoints=websecure"
+      - "traefik.http.routers.blazegraph.tls=true"
+      - "traefik.http.routers.blazegraph.tls.certresolver=myresolver"
+
+  blast:
+     container_name: blast
+     image: mosuka/blast:v0.3.2
+     ports:
+       - 10000
+       - 10001
+       - 10002:10002
+     ulimits:
+       nofile:
+         soft: "65536"
+         hard: "65536"
+#     env_file:
+#       - ./example.env
+     environment:
+       - SERVICE_PORTS=10000, 10001, 10002
+     volumes:
+       - "/data/volumes/blast:/data"
+#     networks:
+#       - web
+# 0.3.0
+#     command: ["start", "--bind-addr=:10000", "--grpc-addr=:10001", "--http-addr=:10002", "--node-id=node1"]
+#0.3.2
+     command: ["start", "--bind-addr=:10000", "--grpc-addr=:10001", "--http-addr=:10002", "--raft-node-id=node1"]
+# v0.8.1
+#     command: ["blast", "dispatcher","start", "--node-address=:10000", "--grpc-address=:10001", "--http-address=:10002", "--node-id=node1"]
+
